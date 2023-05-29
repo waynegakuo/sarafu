@@ -1,0 +1,22 @@
+<nav class=" p-4 flex justify-between items-center">
+
+  <!-- Left side of Nav -->
+  <div class="flex items-center">
+    <span class="text-2xl font-bold hover:text-gray-500 cursor-pointer">Sarafu</span>
+  </div>
+
+  <!-- Right side of nav -->
+
+  <div class="hidden flex-row md:flex">
+    <a [routerLink]="['']" routerLinkActive="router-link-active"
+       class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Home</a>
+    <a [routerLink]="['login']" routerLinkActive="router-link-active"
+       class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Login</a>
+    <a [routerLink]="['signup']"
+       routerLinkActive="router-link-active"
+       class="hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150"
+    >
+      Sign Up
+    </a>
+  </div>
+</nav>
