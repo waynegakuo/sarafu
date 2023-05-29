@@ -6,6 +6,15 @@ const routes: Routes = [
   {
     path: '',
     component: LandingComponent
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./modules/login/login.module').then(m => m.LoginModule)
+  },
+  { path: 'signup', loadChildren: () => import('./modules/signup/signup.module').then(m => m.SignupModule) },
+  {
+    path: "**",
+    redirectTo: ''
   }
 ];
 
