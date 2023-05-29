@@ -1,5 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
+import {AuthService} from "../../services/core/auth/auth.service";
 
 @Component({
   selector: 'app-signup',
@@ -11,6 +12,7 @@ export class SignupComponent {
   errorMsg!: string;
 
   formBuilder: FormBuilder = inject(FormBuilder);
+  public authService: AuthService = inject(AuthService);
 
   get provideFullYear(): number {
     const date: Date = new Date()
@@ -26,6 +28,8 @@ export class SignupComponent {
   });
 
   signUpUser(): void {
+    //TODO: handle then for happy and error paths
+    this.authService.signUpUser();
   }
 
   googleSignUp(): void {
