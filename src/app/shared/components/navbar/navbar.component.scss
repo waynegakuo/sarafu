@@ -1,0 +1,16 @@
+button.mat-menu-item:focus {
+  outline: none;
+}
+
+.mat-menu-item .mat-icon {
+  color: #1F1F1F;
+  font-size: 2em;
+}
+
+.mat-menu-item {
+  display: flex;
+  align-items: center;
+  font-family: 'Lato';
+  font-size: 15px;
+  font-weight: bolder;
+}
