@@ -27,7 +27,10 @@ export class SignupComponent {
   }
 
   googleSignUp(): void {
-
+    this.authService.googleSignIn()
+      .catch(error => {
+        this.globalService.showSnackbar(error.message);
+      });
   }
 
 }

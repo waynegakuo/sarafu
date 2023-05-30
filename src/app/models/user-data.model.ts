@@ -3,5 +3,6 @@ export interface UserData {
   displayName: string | null,
   email: string | null,
   country: string | null,
-  fullName: string | null
+  fullName: string | null,
+  authType: string
 }

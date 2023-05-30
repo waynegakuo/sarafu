@@ -14,7 +14,7 @@ import {
   browserLocalPersistence,
   UserCredential,
   getIdTokenResult,
-  IdTokenResult
+  IdTokenResult, signInWithRedirect, getRedirectResult
 } from '@angular/fire/auth';
 import {doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {FormBuilder, Validators} from "@angular/forms";
@@ -100,7 +100,8 @@ export class AuthService {
       displayName: this.signUpForm.controls.fullName.value,
       email: this.signUpForm.controls.email.value,
       country: this.signUpForm.controls.country.value,
-      fullName: this.signUpForm.controls.fullName.value
+      fullName: this.signUpForm.controls.fullName.value,
+      authType: 'email-and-password'
     }
     setDoc(userRef, data, {merge: true})
       .then((data: void) => {
@@ -108,6 +109,12 @@ export class AuthService {
         this.globalService.showSnackbar('Welcome to Sarafu');
         return this.router.navigate(['../dashboard']);
       })
+  }
+
+  async googleSignIn() {
+    const provider = new GoogleAuthProvider();
+    const userCred: UserCredential = await signInWithPopup(this.auth, provider);
+    return this.updateUserData(userCred, 'google');
   }
 
   /**
@@ -137,5 +144,27 @@ export class AuthService {
       .then((token: IdTokenResult): void => {
         localStorage.setItem('sarafu-auth-token', token.token);
       });
+  }
+
+  /**
+   * Takes info from the auth state and mirror it on the firestore document
+   * This is where you could add any kind of custom data that you want
+   * @param user user information gotten from the auth state
+   * @param authType the type of authentication used
+   */
+  private updateUserData(user: UserCredential | null, authType: string) {
+    const userRef = doc(this.firestore, `users/${user?.user.uid}`);
+    const data = {
+      uid: user?.user.uid,
+      displayName: user?.user.displayName,
+      email: user?.user.email,
+      authType: authType
+    }
+    setDoc(userRef, data, {merge: true})
+      .then(() => {
+        // this.getToken(user);
+        this.globalService.showSnackbar('Welcome to Sarafu');
+        return this.router.navigate(['../dashboard']);
+      })
   }
 }
