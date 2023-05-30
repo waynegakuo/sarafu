@@ -16,6 +16,9 @@
        class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Home</a>
     <a [routerLink]="['login']" routerLinkActive="router-link-active"
        class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Login</a>
+
+    <a (click)="onSignOutUserClicked()" [routerLink]="['login']" routerLinkActive="router-link-active"
+       class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Log out</a>
     <a [routerLink]="['signup']"
        routerLinkActive="router-link-active"
        class="hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150"

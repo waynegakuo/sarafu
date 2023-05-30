@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
+import {AuthService} from "../../../services/core/auth/auth.service";
 
 @Component({
   selector: 'app-navbar',
@@ -7,8 +8,11 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
 
-  onSignOutUserClicked() {
+  private authService = inject(AuthService);
 
+  onSignOutUserClicked() {
+    this.authService.signOutUser();
   }
+
 
 }

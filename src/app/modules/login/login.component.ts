@@ -1,5 +1,7 @@
 import {Component, inject} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
+import {GlobalService} from "../../services/core/global/global.service";
+import {AuthService} from "../../services/core/auth/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -11,6 +13,8 @@ export class LoginComponent {
   errorMsg: string = '';
 
   formBuilder = inject(FormBuilder);
+  globalService = inject(GlobalService);
+  authService = inject(AuthService);
 
   loginForm = this.formBuilder.group({
     email: ['', Validators.required],
@@ -23,6 +27,7 @@ export class LoginComponent {
   }
 
   loginUser(): void {
+    this.authService.loginUser();
   }
 
   onGoogleSignUpClicked(): void {

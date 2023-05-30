@@ -1,4 +1,4 @@
-import {inject, Injectable, Optional} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {
   Auth,
   authState,
@@ -12,26 +12,23 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   browserLocalPersistence,
-  UserCredential
+  UserCredential,
+  getIdTokenResult,
+  IdTokenResult
 } from '@angular/fire/auth';
-import {EMPTY, map, Observable, Subscription, switchMap} from "rxjs";
-import {doc, docData, Firestore, setDoc} from '@angular/fire/firestore';
-import {traceUntilFirst} from "@angular/fire/performance";
+import {doc, Firestore, setDoc} from '@angular/fire/firestore';
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
-import {error} from "@angular/compiler-cli/src/transformers/util";
+import {UserData} from "../../../models/user-data.model";
+import {GlobalService} from "../global/global.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private readonly userDisposable: Subscription | undefined;
-  private readonly user$: Observable<User | null> = EMPTY;
-
-  currentUserId!: string;
-
   router = inject(Router);
+  globalService = inject(GlobalService);
 
   constructor(private readonly auth: Auth, private firestore: Firestore, private formBuilder: FormBuilder) {
     // Initialize the firebase auth instance.
@@ -54,14 +51,34 @@ export class AuthService {
     password: ['', Validators.minLength(8)],
   });
 
+  /**
+   * This method logs in the user to the platform
+   * using their email and password.
+   * It uses Firebase Auth for checking if user exists in the database
+   * and throws an error if otherwise
+   */
   async loginUser(): Promise<void> {
     await signInWithEmailAndPassword(
       this.auth,
       String(this.loginForm.controls.email.value),
       String(this.loginForm.controls.password.value)
-    );
+    )
+      .then((userCredential: UserCredential) => {
+        // this.getToken(userCredential);
+        this.globalService.showSnackbar(`Welcome back`);
+        return this.router.navigate(['../dashboard']);
+      })
+      .catch(error => {
+        this.globalService.showSnackbar(error.message);
+      });
   }
 
+  /**
+   * This method signs up the user to the platform
+   * using the details provided in the registration form.
+   * The user credential returned after creating the user with their email and password
+   * is then sent over to createUserData to create a collection of users in the database.
+   */
   async signUpUser(): Promise<void> {
     const userCredential: UserCredential = await createUserWithEmailAndPassword(
       this.auth,
@@ -71,10 +88,14 @@ export class AuthService {
     return this.createUserData(userCredential);
   }
 
+  /**
+   * Adds a new user to the users collection in the database.
+   * @param user user credential details returned from createUserWithEmailAndPassword
+   */
   createUserData(user: UserCredential): void {
     const userRef = doc(this.firestore, `users/${user.user.uid}`);
 
-    const data = {
+    const data: UserData = {
       uid: user.user.uid,
       displayName: this.signUpForm.controls.fullName.value,
       email: this.signUpForm.controls.email.value,
@@ -83,11 +104,38 @@ export class AuthService {
     }
     setDoc(userRef, data, {merge: true})
       .then((data: void) => {
-        return this.router.navigate(['../home']);
+        // this.getToken(user);
+        this.globalService.showSnackbar('Welcome to Sarafu');
+        return this.router.navigate(['../dashboard']);
       })
-      .catch(error => {
-        //TODO: Handle error via Snackbar
-        console.log(error.message);
+  }
+
+  /**
+   * This method signs out current logged-in user
+   */
+  async signOutUser() {
+    await signOut(this.auth)
+      .then(() => {
+          // Clear all local storage items.
+          localStorage.clear();
+          return this.router.navigate(['../home']);
+        }
+      )
+      .catch((error): void => {
+          this.globalService.showSnackbar("Couldn't sign out. Please try again");
+        }
+      );
+  }
+
+  /**
+   * This method gets the current logged-in user's authentication token
+   * @param userCred
+   */
+  getToken(userCred: UserCredential): void {
+    const user = userCred.user;
+    getIdTokenResult(user, true)
+      .then((token: IdTokenResult): void => {
+        localStorage.setItem('sarafu-auth-token', token.token);
       });
   }
 }
