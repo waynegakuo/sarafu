@@ -1,4 +1,4 @@
-<nav class=" p-4 flex justify-between items-center">
+<nav class="py-4 flex justify-between items-center">
 
   <!-- Left side of Nav -->
   <div class="flex items-center">
@@ -14,13 +14,16 @@
   <div class="hidden flex-row md:flex">
     <a [routerLink]="['']" routerLinkActive="router-link-active"
        class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Home</a>
+
+    <a *appShowIfLoggedIn="true" [routerLink]="['dashboard']" routerLinkActive="router-link-active"
+       class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Dashboard</a>
     <a *appShowIfLoggedIn="false" [routerLink]="['login']" routerLinkActive="router-link-active"
        class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Login</a>
 
-    <a *appShowIfLoggedIn="true" (click)="onSignOutUserClicked()" [routerLink]="['login']"
+    <a *appShowIfLoggedIn="true" (click)="onSignOutUserClicked()"
        routerLinkActive="router-link-active"
-       class="mr-2 hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150">Log
-      out</a>
+       class="cursor-pointer mr-2 hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150"
+    >Log out</a>
     <a *appShowIfLoggedIn="false" [routerLink]="['signup']"
        routerLinkActive="router-link-active"
        class="hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150"

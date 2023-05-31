@@ -1,1 +1,35 @@
-<p>dashboard works!</p>
+<section class="flex flex-col pt-4">
+  <div>
+    <h3 class="text-3xl font-bold">Overview</h3>
+  </div>
+
+  <section class="flex flex-row pt-7">
+    <div class="flex flex-col flex-1">
+      <span class="text-2xl font-bold">Recent Transactions</span>
+    </div>
+
+    <div class="flex flex-col flex-1">
+      <span class="text-2xl font-bold">Quick Transfer</span>
+      <div class="flex flex-row mt-8">
+        <form class="flex flex-row">
+          <input
+            type="text"
+            placeholder="Enter the phone number"
+            class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150 mr-3">
+          <input
+            type="text"
+            placeholder="Enter the amount"
+            class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150">
+
+          <button
+            class="cursor-pointer mr-2 hover:text-gray-500 border-2 border-black
+                   flex py-2 px-4 bg-[#1F1F1F] rounded font-semibold
+                   transition ease-in duration-150 ml-4 items-center"
+          >
+            <mat-icon class="text-white">send</mat-icon>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</section>
