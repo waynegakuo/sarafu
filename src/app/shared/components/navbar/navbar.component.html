@@ -14,13 +14,34 @@
   <div class="hidden flex-row md:flex">
     <a [routerLink]="['']" routerLinkActive="router-link-active"
        class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Home</a>
-    <a [routerLink]="['login']" routerLinkActive="router-link-active"
+    <a *appShowIfLoggedIn="false" [routerLink]="['login']" routerLinkActive="router-link-active"
        class="inline-block p-2 font-bold mr-2 hover:text-gray-500">Login</a>
-    <a [routerLink]="['signup']"
+
+    <a *appShowIfLoggedIn="true" (click)="onSignOutUserClicked()" [routerLink]="['login']"
+       routerLinkActive="router-link-active"
+       class="mr-2 hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150">Log
+      out</a>
+    <a *appShowIfLoggedIn="false" [routerLink]="['signup']"
        routerLinkActive="router-link-active"
        class="hover:text-gray-500 border-2 border-black inline-block py-2 px-4 bg-white rounded font-semibold transition ease-in duration-150"
     >
       Sign Up
     </a>
+
+    <ng-container *appShowIfLoggedIn="true">
+      <ng-container *ngIf="auth.userDataDetails?.photoURL">
+        <img [src]="auth.userDataDetails.photoURL" alt="User"
+             class="w-10 h-10 rounded-full border-4 border-[#1F1F1F] cursor-pointer"
+             [matMenuTriggerFor]="menu">
+      </ng-container>
+    </ng-container>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item routerLinkActive="active"
+              (click)="onSignOutUserClicked()">
+        <mat-icon>exit_to_app</mat-icon>
+        Sign Out
+      </button>
+    </mat-menu>
   </div>
 </nav>
