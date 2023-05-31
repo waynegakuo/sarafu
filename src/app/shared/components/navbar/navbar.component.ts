@@ -10,6 +10,8 @@ export class NavbarComponent {
 
   private authService = inject(AuthService);
 
+  auth = this.authService
+
   onSignOutUserClicked() {
     this.authService.signOutUser();
   }

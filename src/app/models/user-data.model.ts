@@ -4,5 +4,6 @@ export interface UserData {
   email: string | null,
   country: string | null,
   fullName: string | null,
-  authType: string
+  authType: string,
+  photoURL?: string
 }

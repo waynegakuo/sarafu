@@ -30,7 +30,10 @@ export class LoginComponent {
     this.authService.loginUser();
   }
 
-  onGoogleSignUpClicked(): void {
-
+  onGoogleSignInClicked(): void {
+    this.authService.googleSignIn()
+      .catch(error => {
+        this.globalService.showSnackbar(error.message);
+      });
   }
 }

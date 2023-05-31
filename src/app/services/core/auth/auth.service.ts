@@ -16,11 +16,14 @@ import {
   getIdTokenResult,
   IdTokenResult, signInWithRedirect, getRedirectResult
 } from '@angular/fire/auth';
-import {doc, Firestore, setDoc} from '@angular/fire/firestore';
+import {doc, Firestore, getDoc, onSnapshot, setDoc} from '@angular/fire/firestore';
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {UserData} from "../../../models/user-data.model";
 import {GlobalService} from "../global/global.service";
+import {Observable, of, Subject, switchMap} from "rxjs";
+import {AngularFirestore} from "@angular/fire/compat/firestore";
+import {AngularFireAuth} from "@angular/fire/compat/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -30,11 +33,36 @@ export class AuthService {
   router = inject(Router);
   globalService = inject(GlobalService);
 
-  constructor(private readonly auth: Auth, private firestore: Firestore, private formBuilder: FormBuilder) {
+  user$!: Observable<unknown>;
+
+  userDataDetails!: UserData;
+
+  constructor(private readonly auth: Auth,
+              private firestore: Firestore,
+              private formBuilder: FormBuilder,
+              private afs: AngularFirestore,
+              private afAuth: AngularFireAuth
+  ) {
     // Initialize the firebase auth instance.
     this.auth = getAuth();
     // Persist firebase auth session.
     this.auth.setPersistence(browserLocalPersistence);
+
+    // We use this since we want to switch to another observable of the record, further than the authentication tab
+    // say you want to get the email and displayName
+    this.user$ = authState(this.auth)
+      .pipe(
+        switchMap(async (user) => {
+          if (user) {
+            const docRef = doc(firestore, `users/${user?.uid}`);
+            return onSnapshot(docRef, (dataDoc) => {
+              return this.userDataDetails = dataDoc.data() as UserData;
+            })
+          } else {
+            return of(null); // allows us to tell if the user isn't logged in
+          }
+        })
+      )
   }
 
   // Login form
@@ -158,7 +186,8 @@ export class AuthService {
       uid: user?.user.uid,
       displayName: user?.user.displayName,
       email: user?.user.email,
-      authType: authType
+      authType: authType,
+      photoURL: user?.user.photoURL
     }
     setDoc(userRef, data, {merge: true})
       .then(() => {
