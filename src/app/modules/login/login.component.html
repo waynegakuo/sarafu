@@ -7,7 +7,7 @@
 
   <div class="w-full mt-10 lg:mt-0 lg:w-1/2 flex flex-col items-center justify-center content-center">
 
-    <form [formGroup]="loginForm" class="flex flex-col md:w-2/4" (ngSubmit)="loginUser()">
+    <form [formGroup]="this.authService.loginForm" class="flex flex-col md:w-2/4" (ngSubmit)="loginUser()">
       <label class="text-xl font-semibold mb-3">Email address</label>
       <input type="email" placeholder="example@gmail.com" formControlName="email"
              class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150 mb-3">
@@ -23,7 +23,7 @@
         transition ease-in duration-150">LOGIN</button>
 
         <!-- Google Auth -->
-        <div (click)="onGoogleSignUpClicked()"
+        <div (click)="onGoogleSignInClicked()"
              class="bg-gray-100 rounded h-12 p-4 text-black flex flex-row items-center justify-center content-center cursor-pointer">
           <!-- Google Icon -->
           <div class="icon-box">

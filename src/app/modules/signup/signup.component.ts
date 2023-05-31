@@ -1,5 +1,6 @@
 import {Component, inject} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
+import {AuthService} from "../../services/core/auth/auth.service";
+import {GlobalService} from "../../services/core/global/global.service";
 
 @Component({
   selector: 'app-signup',
@@ -10,26 +11,26 @@ export class SignupComponent {
 
   errorMsg!: string;
 
-  formBuilder: FormBuilder = inject(FormBuilder);
+  public authService: AuthService = inject(AuthService);
+  globalService = inject(GlobalService);
 
   get provideFullYear(): number {
     const date: Date = new Date()
     return date.getFullYear();
   }
 
-  // Sign up form
-  signUpForm = this.formBuilder.group({
-    fullName: ['', [Validators.required]],
-    country: ['', Validators.required],
-    email: ['', Validators.email],
-    password: ['', Validators.minLength(8)],
-  });
-
   signUpUser(): void {
+    this.authService.signUpUser()
+      .catch(error => {
+        this.globalService.showSnackbar(error.message);
+      });
   }
 
   googleSignUp(): void {
-
+    this.authService.googleSignIn()
+      .catch(error => {
+        this.globalService.showSnackbar(error.message);
+      });
   }
 
 }
