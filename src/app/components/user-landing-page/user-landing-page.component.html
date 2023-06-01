@@ -1,0 +1,78 @@
+<section class="flex flex-col pt-4">
+  <div>
+    <h3 class="text-3xl font-bold">Overview</h3>
+  </div>
+
+  <section class="flex flex-row pt-7">
+
+    <div class="flex flex-col flex-1">
+      <span class="text-2xl font-bold">Quick Transfer</span>
+      <div class="flex flex-row mt-8">
+        <form class="flex flex-row" [formGroup]="sendMoneyForm" (ngSubmit)="onSendMoneySubmitted()">
+          <input
+            [ngClass]="{'is-invalid': numberControl?.invalid && numberControl?.touched}"
+            formControlName="number"
+            type="text"
+            placeholder="Enter the phone number"
+            class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150 mr-3">
+          <input
+            [ngClass]="{'is-invalid': amountControl?.invalid && amountControl?.touched}"
+            formControlName="amount"
+            type="text"
+            placeholder="Enter the amount"
+            class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150">
+          <button
+            [disabled]="sendMoneyForm.invalid"
+            class="affirmative-btn cursor-pointer mr-2 hover:text-gray-500 border-2 border-black
+                   flex py-2 px-4 bg-[#1F1F1F] rounded font-semibold
+                   transition ease-in duration-150 ml-4 items-center"
+          >
+            <mat-icon class="text-white">send</mat-icon>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="flex flex-col flex-1 px-12">
+      <span class="text-2xl font-bold">Recent Transactions</span>
+
+      <div class="mt-8 flex flex-col">
+        <ng-container *ngFor="let transaction of recentTransactions">
+          <div class="flex flex-row mb-5">
+            <div class="flex flex-col flex-1">
+              <p class="font-bold">{{transaction.name}}</p>
+              <p class="text-gray-400">{{transaction.reason}}</p>
+            </div>
+
+            <div class="flex-col text-end flex-1">
+              <p class="font-bold">Ksh {{transaction.amount | number: "1.0-0"}}</p>
+              <p class="text-gray-400">{{transaction.time}}</p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="sidebar flex flex-col flex-2">
+      <span class="text-2xl font-bold">Frequent Payments</span>
+      <div class="mt-8 flex flex-row space-x-3">
+        <ng-container *ngFor="let frequentPayment of frequentPayments">
+          <div class="rounded-2xl border-2 border-gray-200 p-4 flex flex-row">
+            <img class="mr-4" width="50" height="50" alt="frequent payment service logo" [ngSrc]="frequentPayment.logo">
+            <div class="flex flex-col">
+              <p class="font-bold">Ksh {{frequentPayment.amount}}</p>
+              <p class="text-gray-400">{{frequentPayment.title}}</p>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="flex flex-col mt-20 items-center content-center">
+        <img class="w-80" alt="statistics" src="assets/svgs/dashboard/statistics.svg">
+        <p class="text-2xl font-bold text-gray-600 mt-12">Check in later for the statistics</p>
+      </div>
+
+    </div>
+
+  </section>
+</section>
