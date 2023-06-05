@@ -31,7 +31,7 @@ export class LoginComponent {
   }
 
   onGoogleSignInClicked(): void {
-    this.authService.googleSignIn()
+    this.authService.googleLogin()
       .catch(error => {
         this.globalService.showSnackbar(error.message);
       });

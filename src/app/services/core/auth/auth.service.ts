@@ -2,28 +2,22 @@ import {inject, Injectable} from '@angular/core';
 import {
   Auth,
   authState,
-  signInAnonymously,
   signOut,
-  User,
   GoogleAuthProvider,
   signInWithPopup,
-  user,
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   browserLocalPersistence,
   UserCredential,
-  getIdTokenResult,
-  IdTokenResult, signInWithRedirect, getRedirectResult
 } from '@angular/fire/auth';
-import {doc, Firestore, getDoc, onSnapshot, setDoc} from '@angular/fire/firestore';
+import {doc, Firestore, onSnapshot, setDoc} from '@angular/fire/firestore';
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {UserData} from "../../../models/user-data.model";
 import {GlobalService} from "../global/global.service";
-import {Observable, of, Subject, switchMap} from "rxjs";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {AngularFireAuth} from "@angular/fire/compat/auth";
+import {Observable, of, switchMap} from "rxjs";
+import Swal from "sweetalert2";
 
 @Injectable({
   providedIn: 'root'
@@ -39,9 +33,7 @@ export class AuthService {
 
   constructor(private readonly auth: Auth,
               private firestore: Firestore,
-              private formBuilder: FormBuilder,
-              private afs: AngularFirestore,
-              private afAuth: AngularFireAuth
+              private formBuilder: FormBuilder
   ) {
     // Initialize the firebase auth instance.
     this.auth = getAuth();
@@ -74,7 +66,7 @@ export class AuthService {
   // Sign up form
   signUpForm = this.formBuilder.group({
     fullName: ['', [Validators.required]],
-    country: ['', Validators.required],
+    phone: [ Validators.required],
     email: ['', Validators.email],
     password: ['', Validators.minLength(8)],
   });
@@ -127,18 +119,36 @@ export class AuthService {
       uid: user.user.uid,
       displayName: this.signUpForm.controls.fullName.value,
       email: this.signUpForm.controls.email.value,
-      country: this.signUpForm.controls.country.value,
+      phone: this.signUpForm.controls.phone.value,
       fullName: this.signUpForm.controls.fullName.value,
       authType: 'email-and-password'
     }
     setDoc(userRef, data, {merge: true})
       .then((data: void) => {
-        // this.getToken(user);
-        this.globalService.showSnackbar('Welcome to Sarafu');
+        Swal.fire({
+          icon: 'success',
+          title: 'Registration Successful',
+          text: `Welcome to Sarafu!`,
+          customClass: {
+            confirmButton: 'sweetAlertButton'
+          }
+        });
         return this.router.navigate(['../dashboard']);
       })
   }
 
+  /**
+   * This method logs in the user using Google Authentication
+   */
+  async googleLogin() {
+    const provider = new GoogleAuthProvider();
+    const userCred: UserCredential = await signInWithPopup(this.auth, provider);
+    return this.updateUserDataLogin(userCred, 'google');
+  }
+
+  /**
+   * This method signs up the user using Google Authentication
+   */
   async googleSignIn() {
     const provider = new GoogleAuthProvider();
     const userCred: UserCredential = await signInWithPopup(this.auth, provider);
@@ -163,16 +173,51 @@ export class AuthService {
   }
 
   /**
-   * This method gets the current logged-in user's authentication token
-   * @param userCred
+   * Takes info from the auth state and mirror it on the firestore document
+   * This is where you could add any kind of custom data that you want
+   * @param user user information gotten from the auth state
+   * @param authType the type of authentication used
    */
-  getToken(userCred: UserCredential): void {
-    const user = userCred.user;
-    getIdTokenResult(user, true)
-      .then((token: IdTokenResult): void => {
-        localStorage.setItem('sarafu-auth-token', token.token);
+  async updateUserData(user: UserCredential | null, authType: string) {
+    const userRef = doc(this.firestore, `users/${user?.user.uid}`);
+
+    const {value: phone_number} = await Swal.fire({
+      title: 'Kindly provide your phone number',
+      input: 'number',
+      inputLabel: 'Your phone number',
+      inputPlaceholder: '0700000000',
+      customClass: {
+        confirmButton: 'sweetAlertButton'
+      }
+    })
+
+    if (phone_number) {
+      const data = {
+        uid: user?.user.uid,
+        displayName: user?.user.displayName,
+        email: user?.user.email,
+        authType: authType,
+        photoURL: user?.user.photoURL,
+        phone: Number(phone_number)
+      }
+      setDoc(userRef, data, {merge: true})
+        .then(() => {
+          // this.getToken(user);
+          this.globalService.showSnackbar('Welcome to Sarafu');
+          return this.router.navigate(['../dashboard']);
+        })
+
+      await Swal.fire({
+        icon: 'success',
+        title: 'Registration Successful',
+        text: 'You have registered successfully!',
+        customClass: {
+          confirmButton: 'sweetAlertButton'
+        }
       });
+    }
   }
+
 
   /**
    * Takes info from the auth state and mirror it on the firestore document
@@ -180,20 +225,30 @@ export class AuthService {
    * @param user user information gotten from the auth state
    * @param authType the type of authentication used
    */
-  private updateUserData(user: UserCredential | null, authType: string) {
+  async updateUserDataLogin(user: UserCredential | null, authType: string) {
     const userRef = doc(this.firestore, `users/${user?.user.uid}`);
+
     const data = {
       uid: user?.user.uid,
       displayName: user?.user.displayName,
       email: user?.user.email,
       authType: authType,
-      photoURL: user?.user.photoURL
+      photoURL: user?.user.photoURL,
     }
     setDoc(userRef, data, {merge: true})
       .then(() => {
         // this.getToken(user);
-        this.globalService.showSnackbar('Welcome to Sarafu');
+        this.globalService.showSnackbar('Welcome back');
         return this.router.navigate(['../dashboard']);
       })
+
+    await Swal.fire({
+      icon: 'success',
+      title: 'Login Successful',
+      text: `Welcome back, ${data.displayName}`,
+      customClass: {
+        confirmButton: 'sweetAlertButton'
+      }
+    });
   }
 }
