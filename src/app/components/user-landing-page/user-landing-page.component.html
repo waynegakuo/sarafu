@@ -34,6 +34,29 @@
           </button>
         </form>
       </div>
+
+      <div class="flex flex-col">
+        <div *ngIf="transactionService.numberControl?.invalid && transactionService.numberControl?.touched">
+          <small class="text-danger" *ngIf="this.transactionService.numberControl?.errors?.['required']">
+            *Phone number is required. Start with zero, followed by the other 9 digits.
+          </small>
+
+          <small class="text-danger" *ngIf="this.transactionService.numberControl?.errors?.['minlength']">
+            *Phone number cannot be less than 10 digits
+          </small>
+        </div>
+
+        <div *ngIf="transactionService.amountControl?.invalid && transactionService.amountControl?.touched">
+          <small class="text-danger" *ngIf="this.transactionService.amountControl?.errors?.['required']">
+            *Amount is required
+          </small>
+
+          <small class="text-danger" *ngIf="this.transactionService.amountControl?.errors?.['min']">
+            *Amount cannot be less than Kshs. 5
+          </small>
+        </div>
+      </div>
+
     </div>
 
     <div class="flex flex-col flex-1 px-12">
@@ -53,6 +76,21 @@
             </div>
           </div>
         </ng-container>
+
+        <ng-container *ngFor="let transaction of realtimeTransactionUpdates">
+          <div class="flex flex-row mb-5">
+            <div class="flex flex-col flex-1">
+              <p class="font-bold">{{transaction?.['recipient_name']}}</p>
+              <p class="text-gray-400">Transfer</p>
+            </div>
+
+            <div class="flex-col text-end flex-1">
+              <p class="font-bold">Ksh {{transaction?.['amount'] | number: "1.0-0"}}</p>
+              <p class="text-gray-400">{{transaction?.['time'] | date: "h:mm a"}}</p>
+            </div>
+          </div>
+        </ng-container>
+
       </div>
     </div>
 

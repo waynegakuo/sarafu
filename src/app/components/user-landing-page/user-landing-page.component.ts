@@ -1,18 +1,24 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {Transaction} from "../../models/transaction.model";
 import {FrequentPayments} from "../../models/frequent-payments.model";
 import {GlobalService} from "../../services/core/global/global.service";
 import {TransactionsService} from "../../services/transactions/transactions.service";
+import {collection, Firestore, onSnapshot, Unsubscribe} from "@angular/fire/firestore";
+import {Recipient} from "../../models/recipient.model";
 
 @Component({
   selector: 'app-user-landing-page',
   templateUrl: './user-landing-page.component.html',
   styleUrls: ['./user-landing-page.component.scss']
 })
-export class UserLandingPageComponent {
-
+export class UserLandingPageComponent implements OnInit, OnDestroy {
   globalService = inject(GlobalService);
   transactionService = inject(TransactionsService);
+  firestore = inject(Firestore);
+
+  onSnapshotSubscription!: Unsubscribe;
+
+  realtimeTransactionUpdates!: Recipient[];
 
   recentTransactions: Transaction[] = [
     {
@@ -45,7 +51,6 @@ export class UserLandingPageComponent {
     },
   ];
 
-
   frequentPayments: FrequentPayments[] = [
     {
       logo: 'assets/svgs/dashboard/mastercard.svg',
@@ -62,12 +67,37 @@ export class UserLandingPageComponent {
       amount: '350.00',
       title: 'Spotify Music'
     },
-  ]
+  ];
 
+  ngOnInit() {
+    this.getRealTimeTransactionUpdates();
+  }
+
+  /**
+   * This method provides real-time updates on documents inside the transactions collection.
+   */
+  getRealTimeTransactionUpdates() {
+    this.onSnapshotSubscription = onSnapshot(collection(this.firestore, 'transactions'), (data) => {
+      this.realtimeTransactionUpdates = data.docs.map((doc) => {
+        return {...doc.data() as Recipient};
+      })
+    })
+  }
+
+  /**
+   * This method is an event listener that fires the sendMoney() method in the transactions service
+   */
   onSendMoneySubmitted(): void {
     this.transactionService.sendMoney()
       .catch((error): void => {
         this.globalService.showSnackbar(error.message);
       });
+  }
+
+  /**
+   * We detach the Firestore real-time updates listener inside the onDestroy lifecycle hook.
+   */
+  ngOnDestroy() {
+    this.onSnapshotSubscription();
   }
 }
