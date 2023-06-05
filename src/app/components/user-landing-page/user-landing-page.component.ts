@@ -1,8 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {Transaction} from "../../models/transaction.model";
 import {FrequentPayments} from "../../models/frequent-payments.model";
-import {FormBuilder, Validators} from "@angular/forms";
 import {GlobalService} from "../../services/core/global/global.service";
+import {TransactionsService} from "../../services/transactions/transactions.service";
 
 @Component({
   selector: 'app-user-landing-page',
@@ -11,21 +11,8 @@ import {GlobalService} from "../../services/core/global/global.service";
 })
 export class UserLandingPageComponent {
 
-  formBuilder = inject(FormBuilder);
   globalService = inject(GlobalService);
-
-  sendMoneyForm = this.formBuilder.group({
-    number: ['', Validators.required],
-    amount: ['', Validators.required]
-  })
-
-  get numberControl() {
-    return this.sendMoneyForm.get('number');
-  }
-
-  get amountControl() {
-    return this.sendMoneyForm.get('amount');
-  }
+  transactionService = inject(TransactionsService);
 
   recentTransactions: Transaction[] = [
     {
@@ -77,9 +64,10 @@ export class UserLandingPageComponent {
     },
   ]
 
-  onSendMoneySubmitted() {
-    this.globalService.showSnackbar('Money Sent');
-    console.log('Sending money');
+  onSendMoneySubmitted(): void {
+    this.transactionService.sendMoney()
+      .catch((error): void => {
+        this.globalService.showSnackbar(error.message);
+      });
   }
-
 }

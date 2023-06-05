@@ -16,14 +16,12 @@ import {
   getIdTokenResult,
   IdTokenResult, signInWithRedirect, getRedirectResult
 } from '@angular/fire/auth';
-import {doc, Firestore, getDoc, onSnapshot, setDoc} from '@angular/fire/firestore';
+import {doc, Firestore, onSnapshot, setDoc} from '@angular/fire/firestore';
 import {FormBuilder, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {UserData} from "../../../models/user-data.model";
 import {GlobalService} from "../global/global.service";
-import {Observable, of, Subject, switchMap} from "rxjs";
-import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {AngularFireAuth} from "@angular/fire/compat/auth";
+import {Observable, of, switchMap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -39,9 +37,7 @@ export class AuthService {
 
   constructor(private readonly auth: Auth,
               private firestore: Firestore,
-              private formBuilder: FormBuilder,
-              private afs: AngularFirestore,
-              private afAuth: AngularFireAuth
+              private formBuilder: FormBuilder
   ) {
     // Initialize the firebase auth instance.
     this.auth = getAuth();
@@ -74,7 +70,7 @@ export class AuthService {
   // Sign up form
   signUpForm = this.formBuilder.group({
     fullName: ['', [Validators.required]],
-    country: ['', Validators.required],
+    phone: [ Validators.required],
     email: ['', Validators.email],
     password: ['', Validators.minLength(8)],
   });
@@ -127,7 +123,7 @@ export class AuthService {
       uid: user.user.uid,
       displayName: this.signUpForm.controls.fullName.value,
       email: this.signUpForm.controls.email.value,
-      country: this.signUpForm.controls.country.value,
+      phone: this.signUpForm.controls.phone.value,
       fullName: this.signUpForm.controls.fullName.value,
       authType: 'email-and-password'
     }

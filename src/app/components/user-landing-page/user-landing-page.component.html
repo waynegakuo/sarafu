@@ -8,21 +8,24 @@
     <div class="flex flex-col flex-1">
       <span class="text-2xl font-bold">Quick Transfer</span>
       <div class="flex flex-row mt-8">
-        <form class="flex flex-row" [formGroup]="sendMoneyForm" (ngSubmit)="onSendMoneySubmitted()">
+        <form class="flex flex-row"
+              [formGroup]="transactionService.transactionForm"
+              (ngSubmit)="onSendMoneySubmitted()"
+        >
           <input
-            [ngClass]="{'is-invalid': numberControl?.invalid && numberControl?.touched}"
-            formControlName="number"
-            type="text"
-            placeholder="Enter the phone number"
+            [ngClass]="{'is-invalid': transactionService.numberControl?.invalid && transactionService.numberControl?.touched}"
+            formControlName="phone_number"
+            type="number"
+            placeholder="Phone number"
             class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150 mr-3">
           <input
-            [ngClass]="{'is-invalid': amountControl?.invalid && amountControl?.touched}"
+            [ngClass]="{'is-invalid': transactionService.amountControl?.invalid && transactionService.amountControl?.touched}"
             formControlName="amount"
-            type="text"
-            placeholder="Enter the amount"
+            type="number"
+            placeholder="Amount"
             class="border-2 border-gray-500 w-full rounded py-3 px-4 outline-none focus:bg-indigo-100 focus:transition ease-in duration-150">
           <button
-            [disabled]="sendMoneyForm.invalid"
+            [disabled]="transactionService.transactionForm.invalid"
             class="affirmative-btn cursor-pointer mr-2 hover:text-gray-500 border-2 border-black
                    flex py-2 px-4 bg-[#1F1F1F] rounded font-semibold
                    transition ease-in duration-150 ml-4 items-center"

@@ -12,9 +12,7 @@ import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 import { ShowIfLoggedInDirective } from './directives/show-if-logged-in.directive';
-import {AngularFireAuthModule} from "@angular/fire/compat/auth";
-import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
-import {AngularFireModule} from "@angular/fire/compat";
+import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
 
 @NgModule({
   declarations: [
@@ -31,9 +29,7 @@ import {AngularFireModule} from "@angular/fire/compat";
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireAuthModule,
-    AngularFirestoreModule,
+    SweetAlert2Module.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
