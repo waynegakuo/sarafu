@@ -27,8 +27,8 @@ export class TransactionsService {
   currentTime:number = (new Date()).getTime();
 
   transactionForm = this.formBuilder.group({
-    phone_number: [0, [Validators.required]],
-    amount: [0, [Validators.required, Validators.min(5)]]
+    phone_number: ['', [Validators.required]],
+    amount: ['', [Validators.required, Validators.min(5)]]
   });
 
   get numberControl() {
@@ -68,8 +68,8 @@ export class TransactionsService {
 
         // Get the transaction details from user
         const data: Recipient = {
-          recipient_phone_number: this.transactionForm.controls.phone_number.value,
-          amount: this.transactionForm.controls.amount.value,
+          recipient_phone_number: Number(this.transactionForm.controls.phone_number.value),
+          amount: Number(this.transactionForm.controls.amount.value),
           recipient_name: doc.data()['displayName'],
           time: this.currentTime
         };

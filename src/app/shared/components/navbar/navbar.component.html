@@ -7,7 +7,7 @@
       class="w-1/12 mr-2"
       src="assets/logos/sarafu_logo.png"
     >
-    <span class="text-2xl font-bold hover:text-gray-500 cursor-pointer">Sarafu</span>
+    <span [routerLink]="['']" class="text-2xl font-bold hover:text-gray-500 cursor-pointer">Sarafu</span>
   </div>
 
   <!-- Right side of nav -->
@@ -33,18 +33,45 @@
 
     <ng-container *appShowIfLoggedIn="true">
       <ng-container *ngIf="auth.userDataDetails?.photoURL">
-        <img [src]="auth.userDataDetails.photoURL" alt="User"
+        <img [src]="auth.userDataDetails?.photoURL" alt="User"
+             class="w-10 h-10 rounded-full border-4 border-[#1F1F1F] cursor-pointer">
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="flex flex-row md:hidden">
+    <ng-container *appShowIfLoggedIn="true">
+      <ng-container *ngIf="auth.userDataDetails?.photoURL">
+        <img [src]="auth.userDataDetails?.photoURL" alt="User"
              class="w-10 h-10 rounded-full border-4 border-[#1F1F1F] cursor-pointer"
              [matMenuTriggerFor]="menu">
       </ng-container>
     </ng-container>
 
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item routerLinkActive="active"
-              (click)="onSignOutUserClicked()">
-        <mat-icon>exit_to_app</mat-icon>
-        Sign Out
-      </button>
-    </mat-menu>
+    <ng-container *appShowIfLoggedIn="false">
+      <mat-icon class="cursor-pointer" [matMenuTriggerFor]="menu">menu</mat-icon>
+    </ng-container>
   </div>
+
+
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item [routerLink]="['']" [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active">Home
+    </button>
+    <button *appShowIfLoggedIn="true" mat-menu-item [routerLink]="['dashboard']"
+            routerLinkActive="active">Dashboard
+    </button>
+    <button *appShowIfLoggedIn="false" mat-menu-item [routerLink]="['login']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active">Login
+    </button>
+    <button *appShowIfLoggedIn="false" mat-menu-item [routerLink]="['signup']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active">Sign up
+    </button>
+    <button *appShowIfLoggedIn="true" mat-menu-item (click)="onSignOutUserClicked()"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLinkActive="active">Log out
+    </button>
+  </mat-menu>
 </nav>
