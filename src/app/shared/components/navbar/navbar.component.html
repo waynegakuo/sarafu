@@ -43,7 +43,7 @@
     <ng-container *appShowIfLoggedIn="true">
       <ng-container *ngIf="auth.userDataDetails?.photoURL">
         <img [src]="auth.userDataDetails?.photoURL" alt="User"
-             class="w-10 h-10 rounded-full border-4 border-[#1F1F1F] cursor-pointer"
+             class="rounded-full border-4 border-[#1F1F1F] cursor-pointer"
              [matMenuTriggerFor]="menu">
       </ng-container>
     </ng-container>

@@ -66,7 +66,7 @@ export class AuthService {
   // Sign up form
   signUpForm = this.formBuilder.group({
     fullName: ['', [Validators.required]],
-    phone: [ Validators.required],
+    phone: [Validators.required],
     email: ['', Validators.email],
     password: ['', Validators.minLength(8)],
   });
@@ -84,8 +84,14 @@ export class AuthService {
       String(this.loginForm.controls.password.value)
     )
       .then((userCredential: UserCredential) => {
-        // this.getToken(userCredential);
-        this.globalService.showSnackbar(`Welcome back`);
+        Swal.fire({
+          icon: 'success',
+          title: 'Login Successful',
+          text: `Welcome back!`,
+          customClass: {
+            confirmButton: 'sweetAlertButton'
+          }
+        });
         return this.router.navigate(['../dashboard']);
       })
       .catch(error => {
